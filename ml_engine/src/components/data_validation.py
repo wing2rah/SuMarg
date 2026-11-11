@@ -23,9 +23,6 @@ class DataValidation:
         self.validation_config = DataValidationConfig()
 
     def _read_schema(self) -> dict:
-        """
-        Loads schema.yaml file containing schema rules.
-        """
         try:
             with open(self.validation_config.schema_file_path, "r", encoding="utf-8") as f:
                 return yaml.safe_load(f)
@@ -33,18 +30,14 @@ class DataValidation:
             raise CustomException(e, sys)
 
     def validate_all_columns(self) -> bool:
-        """
-        Checks column count and names against schema.yaml.
-        """
         logging.info("Data Validation component started.")
         try:
             validation_status = True
             schema = self._read_schema()
             expected_columns = list(schema.get("COLUMNS", {}).keys())
 
-            # Processed files existence check
             if not self.validation_config.train_data_path.exists() or not self.validation_config.test_data_path.exists():
-                raise FileNotFoundError("train.csv ya test.csv nahi mile. Pehle Data Ingestion run karein.")
+                raise FileNotFoundError("File not found")
 
             train_df = pd.read_csv(self.validation_config.train_data_path)
             test_df = pd.read_csv(self.validation_config.test_data_path)
@@ -54,7 +47,6 @@ class DataValidation:
 
             logging.info(f"Expected schema columns ({len(expected_columns)}): {expected_columns}")
 
-            # 1. Check Column Count
             if len(train_cols) != len(expected_columns):
                 validation_status = False
                 logging.error(f"Train columns count mismatch! Expected {len(expected_columns)}, got {len(train_cols)}")
@@ -63,7 +55,6 @@ class DataValidation:
                 validation_status = False
                 logging.error(f"Test columns count mismatch! Expected {len(expected_columns)}, got {len(test_cols)}")
 
-            # 2. Check Column Names
             for col in expected_columns:
                 if col not in train_cols:
                     validation_status = False
@@ -72,7 +63,6 @@ class DataValidation:
                     validation_status = False
                     logging.error(f"Column [{col}] missing in Test dataset.")
 
-            # 3. Status file save karna
             self.validation_config.status_file_path.parent.mkdir(parents=True, exist_ok=True)
             with open(self.validation_config.status_file_path, "w", encoding="utf-8") as f:
                 f.write(f"Validation status: {validation_status}\n")

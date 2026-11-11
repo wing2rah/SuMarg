@@ -26,7 +26,6 @@ class DataTransformation:
         self.data_transformation_config = DataTransformationConfig()
 
     def get_data_transformer_object(self) -> Pipeline:
-        """RobustScaler use karke preprocessing pipeline banata hai."""
         try:
             pipeline = Pipeline(
                 steps=[
@@ -38,19 +37,18 @@ class DataTransformation:
             raise CustomException(e, sys)
 
     def check_validation_status(self) -> bool:
-        """Data Validation ke status.txt file ko verify karta hai."""
         try:
             status_file = self.data_transformation_config.status_file_path
             
             if not status_file.exists():
-                raise FileNotFoundError(f"Validation status file nahi mila at: {status_file}. Pehle Data Validation chalayein.")
+                raise FileNotFoundError(f"Validation status not found at: {status_file}")
 
             with open(status_file, "r") as f:
                 content = f.read().strip()
                 status = content.split(":")[-1].strip()
 
             if status == "True":
-                logging.info("Data Validation check PASSED. Transformation shuru ki ja sakti hai.")
+                logging.info("Data Validation check PASSED. Transformation started")
                 return True
             else:
                 logging.error(f"Data Validation check FAILED. Status: {status}")
@@ -63,12 +61,10 @@ class DataTransformation:
         try:
             logging.info("Starting Data Transformation component.")
 
-            # Step 1: Validation Check
             is_valid = self.check_validation_status()
             if not is_valid:
                 raise CustomException("Data validation failed! Transformation pipeline abort kiya ja raha hai.", sys)
 
-            # Step 2: Read Train & Test Data
             train_df = pd.read_csv(self.data_transformation_config.train_data_path)
             test_df = pd.read_csv(self.data_transformation_config.test_data_path)
 
@@ -81,7 +77,6 @@ class DataTransformation:
             input_feature_test_df = test_df.drop(columns=[target_column_name])
             target_feature_test_df = test_df[target_column_name]
 
-            # Step 3: Transformation Pipeline
             preprocessing_obj = self.get_data_transformer_object()
 
             logging.info("Applying preprocessing object on training and testing datasets.")
@@ -91,7 +86,6 @@ class DataTransformation:
             train_arr = np.c_[input_feature_train_arr, np.array(target_feature_train_df)]
             test_arr = np.c_[input_feature_test_arr, np.array(target_feature_test_df)]
 
-            # Step 4: Save preprocessor.pkl
             save_object(
                 file_path=str(self.data_transformation_config.preprocessor_obj_file_path),
                 obj=preprocessing_obj

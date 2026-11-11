@@ -27,21 +27,17 @@ class DataIngestion:
     def initiate_data_ingestion(self):
         logging.info("Data Ingestion component started.")
         try:
-            # 1. Raw file check
             if not self.ingestion_config.raw_data_path.exists():
                 raise FileNotFoundError(
                     f"Raw dataset file not found at: {self.ingestion_config.raw_data_path}"
                 )
 
-            # 2. Raw dataset read
             logging.info(f"Reading raw data from: {self.ingestion_config.raw_data_path}")
             df = pd.read_csv(self.ingestion_config.raw_data_path)
             logging.info(f"Raw data shape: {df.shape}")
 
-            # 3. Processed folder ensure karna
             self.ingestion_config.processed_dir.mkdir(parents=True, exist_ok=True)
 
-            # 4. Train-Test Split (80% Train, 20% Test)
             logging.info(f"Splitting data: test_size = {self.ingestion_config.test_size}")
             train_df, test_df = train_test_split(
                 df,
@@ -50,7 +46,6 @@ class DataIngestion:
                 shuffle=True
             )
 
-            # 5. Processed files save karna
             train_df.to_csv(self.ingestion_config.train_data_path, index=False, header=True)
             test_df.to_csv(self.ingestion_config.test_data_path, index=False, header=True)
 
