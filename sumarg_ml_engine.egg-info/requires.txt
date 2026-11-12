@@ -2,6 +2,7 @@ pandas
 numpy
 scikit-learn
 xgboost
+catboost
 lightgbm
 joblib
 traci
@@ -9,4 +10,3 @@ sumolib
 matplotlib
 seaborn
 pyyaml
-flask

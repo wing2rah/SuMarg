@@ -22,5 +22,8 @@ traci_core/runner.py
 traci_core/collectors/__init__.py
 traci_core/collectors/sensor_utils.py
 traci_core/collectors/telemetry_collector.py
+traci_core/collectors/v2v_module.py
 traci_core/controllers/__init__.py
 traci_core/controllers/longitudinal_controller.py
+traci_core/scenarios/__init__.py
+traci_core/scenarios/emergency_braking.py

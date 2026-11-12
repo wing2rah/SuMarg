@@ -3,9 +3,18 @@ import json
 from pathlib import Path
 from dataclasses import dataclass
 
-from sklearn.ensemble import RandomForestRegressor, GradientBoostingRegressor
+from sklearn.ensemble import (
+    RandomForestRegressor,
+    GradientBoostingRegressor,
+    AdaBoostRegressor
+)
 from sklearn.tree import DecisionTreeRegressor
-from sklearn.linear_model import LinearRegression
+from sklearn.linear_model import LinearRegression, Ridge, Lasso
+from sklearn.neighbors import KNeighborsRegressor
+
+from xgboost import XGBRegressor
+from catboost import CatBoostRegressor
+from lightgbm import LGBMRegressor
 
 from ml_engine.src.exception import CustomException
 from ml_engine.src.logger import logging
@@ -30,13 +39,23 @@ class ModelTrainer:
             X_test, y_test = test_array[:, :-1], test_array[:, -1]
 
             models = {
-                "Random Forest": RandomForestRegressor(n_estimators=100, max_depth=12, random_state=42, n_jobs=-1),
-                "Gradient Boosting": GradientBoostingRegressor(n_estimators=100, max_depth=5, learning_rate=0.1, random_state=42),
+                "Linear Regression": LinearRegression(),
+                "Ridge Regression": Ridge(alpha=1.0),
+                "Lasso Regression": Lasso(alpha=0.01),
+
+                "K-Neighbors Regressor": KNeighborsRegressor(n_neighbors=5, n_jobs=-1),
+
                 "Decision Tree": DecisionTreeRegressor(max_depth=10, random_state=42),
-                "Linear Regression": LinearRegression()
+                "Random Forest": RandomForestRegressor(n_estimators=100, max_depth=12, random_state=42, n_jobs=-1),
+                "AdaBoost": AdaBoostRegressor(n_estimators=50, learning_rate=0.1, random_state=42),
+
+                "Gradient Boosting": GradientBoostingRegressor(n_estimators=100, max_depth=5, learning_rate=0.1, random_state=42),
+                "XGBoost": XGBRegressor(n_estimators=100, max_depth=6, learning_rate=0.1, random_state=42, n_jobs=-1),
+                "CatBoost": CatBoostRegressor(iterations=150, depth=6, learning_rate=0.1, verbose=0, random_seed=42),
+                "LightGBM": LGBMRegressor(n_estimators=100, max_depth=6, learning_rate=0.1, random_state=42, verbose=-1, n_jobs=-1)
             }
 
-            logging.info("Initiating model evaluation via utils.evaluate_models.")
+            logging.info(f"Initiating evaluation across {len(models)} candidate models via utils.evaluate_models.")
             model_report = evaluate_models(X_train, y_train, X_test, y_test, models=models)
 
             # Best model selection based on highest R2 Score
@@ -47,7 +66,7 @@ class ModelTrainer:
             if best_model_details["r2_score"] < 0.6:
                 raise CustomException("No best model found with acceptable R2 score (> 0.6)", sys)
 
-            logging.info(f"Best Model Selected: {best_model_name} with R2: {best_model_details['r2_score']}")
+            logging.info(f"Best Model Selected: {best_model_name} with R2: {best_model_details['r2_score']:.4f}")
 
             # Save best model artifact (model.pkl)
             save_object(

@@ -1,28 +1,63 @@
 {
     "best_model": "Random Forest",
-    "r2_score": 0.9565178246510525,
-    "rmse": 1.1245,
-    "mae": 0.7838,
+    "r2_score": 0.998147077426991,
+    "rmse": 0.1538,
+    "mae": 0.0908,
     "all_models": {
-        "Random Forest": {
-            "r2_score": 0.9565178246510525,
-            "rmse": 1.1245,
-            "mae": 0.7838
+        "Linear Regression": {
+            "r2_score": 0.9077450862474223,
+            "rmse": 1.0852,
+            "mae": 0.6588
         },
-        "Gradient Boosting": {
-            "r2_score": 0.9531626164520433,
-            "rmse": 1.1671,
-            "mae": 0.8213
+        "Ridge Regression": {
+            "r2_score": 0.9077471879183575,
+            "rmse": 1.0852,
+            "mae": 0.6588
+        },
+        "Lasso Regression": {
+            "r2_score": 0.9068894165092104,
+            "rmse": 1.0903,
+            "mae": 0.6651
+        },
+        "K-Neighbors Regressor": {
+            "r2_score": 0.9977651640256694,
+            "rmse": 0.1689,
+            "mae": 0.0992
         },
         "Decision Tree": {
-            "r2_score": 0.9476436748931963,
-            "rmse": 1.2339,
-            "mae": 0.8409
+            "r2_score": 0.9976979137247614,
+            "rmse": 0.1714,
+            "mae": 0.0987
         },
-        "Linear Regression": {
-            "r2_score": 0.6804127584887563,
-            "rmse": 3.0485,
-            "mae": 2.3347
+        "Random Forest": {
+            "r2_score": 0.998147077426991,
+            "rmse": 0.1538,
+            "mae": 0.0908
+        },
+        "AdaBoost": {
+            "r2_score": 0.9856932536373021,
+            "rmse": 0.4274,
+            "mae": 0.2573
+        },
+        "Gradient Boosting": {
+            "r2_score": 0.9980446021107403,
+            "rmse": 0.158,
+            "mae": 0.0951
+        },
+        "XGBoost": {
+            "r2_score": 0.9979532422481242,
+            "rmse": 0.1616,
+            "mae": 0.095
+        },
+        "CatBoost": {
+            "r2_score": 0.9978920599806034,
+            "rmse": 0.164,
+            "mae": 0.1025
+        },
+        "LightGBM": {
+            "r2_score": 0.9980787923166503,
+            "rmse": 0.1566,
+            "mae": 0.0941
         }
     }
 }

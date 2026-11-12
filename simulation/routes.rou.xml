@@ -1,28 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <routes xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/routes_file.xsd">
 
-    <!-- 1. Normal Traffic Cars: Yellow -->
+    <!-- 1. Background Traffic Cars: Yellow -->
     <vType id="traffic_car" accel="2.0" decel="4.5" length="5.0" width="1.8" maxSpeed="13.89" color="255,255,0" guiShape="passenger"/>
 
-    <!-- 2. Distinct Bright Cyan Ego Car -->
-    <vType id="ego_car_type" accel="3.0" decel="9.0" length="5.0" width="1.9" maxSpeed="16.0" color="0,255,255" guiShape="passenger"/>
+    <!-- 2. Ego Vehicle: Initial Green (Normal Cruise Base) -->
+    <vType id="ego_car_type" accel="3.0" decel="9.0" length="5.0" width="1.9" maxSpeed="16.0" color="0,255,0" guiShape="passenger"/>
 
-    <!-- 3. Red Lead Obstacle Car -->
-    <vType id="lead_type" accel="2.5" decel="9.0" length="5.0" width="1.9" maxSpeed="14.0" color="255,0,0" guiShape="passenger"/>
+    <!-- 3. Lead Obstacle Car: Initial Blue (Brakes par TraCI Red karega) -->
+    <vType id="lead_type" accel="2.5" decel="9.0" length="5.0" width="1.9" maxSpeed="14.0" color="0,150,255" guiShape="passenger"/>
 
-    <!-- Valid Grid Routes -->
+    <!-- Continuous Perimeter Loop Routes to prevent early despawning -->
     <route id="r_main" edges="A1B1 B1C1"/>
+    <route id="r_loop" edges="A1B1 B1C1 C1C2 C2B2 B2A2 A2A1 A1B1 B1C1"/>
     <route id="r_top" edges="A2B2 B2C2"/>
     <route id="r_bot" edges="A0B0 B0C0"/>
     <route id="r_v0" edges="A0A1 A1A2"/>
     <route id="r_v1" edges="B0B1 B1B2"/>
     <route id="r_v2" edges="C0C1 C1C2"/>
 
-    <!-- Test Pair on Central Street: Dono running speed par chalenge, proper gap ke saath -->
-    <vehicle id="lead_car" type="lead_type" route="r_main" depart="0.0" departLane="0" departPos="50" departSpeed="13.0"/>
-    <vehicle id="ego_car" type="ego_car_type" route="r_main" depart="0.1" departLane="0" departPos="15" departSpeed="13.0"/>
-
-    <!-- 20 Pre-spawned Yellow Background Vehicles (Instant Traffic) -->
+    <!-- STEP 1: All vehicles departing at 0.0s (Strict Departure Sorting) -->
+    <vehicle id="lead_car" type="lead_type" route="r_loop" depart="0.0" departLane="0" departPos="50" departSpeed="13.0"/>
     <vehicle id="bg_1" type="traffic_car" route="r_top" depart="0.0" departLane="0" departPos="20" departSpeed="10.0"/>
     <vehicle id="bg_2" type="traffic_car" route="r_top" depart="0.0" departLane="1" departPos="80" departSpeed="12.0"/>
     <vehicle id="bg_3" type="traffic_car" route="r_bot" depart="0.0" departLane="0" departPos="10" departSpeed="9.0"/>
@@ -34,10 +32,13 @@
     <vehicle id="bg_9" type="traffic_car" route="r_v2" depart="0.0" departLane="0" departPos="30" departSpeed="11.0"/>
     <vehicle id="bg_10" type="traffic_car" route="r_v2" depart="0.0" departLane="1" departPos="100" departSpeed="10.0"/>
 
-    <!-- Continuous Background Flow so cars never disappear -->
-    <flow id="flow_top" type="traffic_car" begin="1" end="300" number="15" route="r_top" departLane="random"/>
-    <flow id="flow_bot" type="traffic_car" begin="1" end="300" number="15" route="r_bot" departLane="random"/>
-    <flow id="flow_v0"  type="traffic_car" begin="1" end="300" number="15" route="r_v0" departLane="random"/>
-    <flow id="flow_v2"  type="traffic_car" begin="1" end="300" number="15" route="r_v2" departLane="random"/>
+    <!-- STEP 2: Ego car departing at 0.1s -->
+    <vehicle id="ego_car" type="ego_car_type" route="r_loop" depart="0.1" departLane="0" departPos="15" departSpeed="13.0"/>
+
+    <!-- STEP 3: Continuous flows from 1.0s onward -->
+    <flow id="flow_top" type="traffic_car" begin="1" end="3600" number="40" route="r_top" departLane="random"/>
+    <flow id="flow_bot" type="traffic_car" begin="1" end="3600" number="40" route="r_bot" departLane="random"/>
+    <flow id="flow_v0"  type="traffic_car" begin="1" end="3600" number="40" route="r_v0" departLane="random"/>
+    <flow id="flow_v2"  type="traffic_car" begin="1" end="3600" number="40" route="r_v2" departLane="random"/>
 
 </routes>

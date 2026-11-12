@@ -43,7 +43,7 @@ class DataIngestion:
                 df,
                 test_size=self.ingestion_config.test_size,
                 random_state=self.ingestion_config.random_state,
-                shuffle=True
+                shuffle=False
             )
 
             train_df.to_csv(self.ingestion_config.train_data_path, index=False, header=True)
